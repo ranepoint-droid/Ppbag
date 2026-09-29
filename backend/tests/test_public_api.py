@@ -1,25 +1,35 @@
-"""Public API regression tests: config, bag index, detail routes, launch gate, drafts, uploads."""
+"""Public API regression tests: config, list/detail, uploads, and launch (no drafts)."""
 
+from concurrent.futures import ThreadPoolExecutor
 import io
 import json
 import uuid
 
 
-def _draft_payload(suffix: str, image_id: str | None = None):
-    token_suffix = ''.join(ch for ch in suffix.upper() if ch.isalnum())[:4] or 'T001'
+def _launch_payload(sim_id: str, request_id: str, suffix: str = 'A1', image_id: str | None = None):
+    token_suffix = ''.join(ch for ch in suffix.upper() if ch.isalnum())[:6] or 'AUTO01'
     return {
-        'name': f'TEST Paperbag {suffix}',
-        'ticker': f'TEST{token_suffix}',
-        'description': 'TEST draft for persistent flow verification.',
+        'name': f'TEST_AUTO_{suffix}_Paperbag Token',
+        'ticker': f'T{token_suffix}'[:10],
+        'description': f'TEST_AUTO launch payload {suffix}.',
         'image_id': image_id,
         'website': 'https://example.com',
         'twitter': 'https://x.com/example',
         'telegram': 'https://t.me/example',
-        'target_sol': 12.5,
-        'asset': 'DOGE',
+        'target_sol': 10.25,
+        'asset': 'SOL',
         'global_asset': 'USDC',
         'mode': 'SHARE',
+        'simulation_id': sim_id,
+        'request_id': request_id,
+        'wallet_provider': 'Phantom',
     }
+
+
+def _new_simulation(api_client, api_url: str) -> str:
+    created = api_client.post(f'{api_url}/simulations')
+    assert created.status_code == 201
+    return created.json()['id']
 
 
 def test_health_and_config_flags(api_client, api_url):
@@ -31,11 +41,12 @@ def test_health_and_config_flags(api_client, api_url):
     assert data['live_transactions'] is False and data['wallet_enabled'] is False
 
 
-def test_projects_support_search_and_six_seeded(api_client, api_url):
+def test_projects_support_search_and_seed_minimum(api_client, api_url):
     response = api_client.get(f'{api_url}/projects', params={'sort': 'trending'})
     assert response.status_code == 200
     rows = response.json()
-    assert len(rows) == 6 and rows[0]['data_mode'] == 'illustrative'
+    ids = {row['id'] for row in rows}
+    assert len(rows) >= 6 and {'dog', 'cat', 'ape', 'bonk', 'pepe', 'wif'}.issubset(ids)
 
 
 def test_projects_search_matches_ticker_name_asset(api_client, api_url):
@@ -94,9 +105,76 @@ def test_forbidden_fee_breakdown_not_exposed(api_client, api_url):
     assert '0.4%' not in raw and '0.2%' not in raw and 'creator fee' not in raw
 
 
-def test_launch_locked_503(api_client, api_url):
-    response = api_client.post(f'{api_url}/launch')
-    assert response.status_code == 503 and 'not configured' in response.text.lower()
+def test_launch_requires_valid_payload_and_known_simulation(api_client, api_url):
+    empty = api_client.post(f'{api_url}/launch', json={})
+    assert empty.status_code == 422
+
+    payload = _launch_payload(str(uuid.uuid4()), str(uuid.uuid4()), suffix='BADSIM')
+    missing_sim = api_client.post(f'{api_url}/launch', json=payload)
+    assert missing_sim.status_code == 422 and 'reconnect your demo wallet' in missing_sim.text.lower()
+
+
+def test_launch_rejects_invalid_provider_bad_links_and_missing_image(api_client, api_url):
+    sim_id = _new_simulation(api_client, api_url)
+    try:
+        payload = _launch_payload(sim_id, str(uuid.uuid4()), suffix='INVPROV')
+        payload['wallet_provider'] = 'Backpack'
+        bad_provider = api_client.post(f'{api_url}/launch', json=payload)
+        assert bad_provider.status_code == 422
+
+        payload = _launch_payload(sim_id, str(uuid.uuid4()), suffix='INVLINK')
+        payload['website'] = 'http://example.com'
+        bad_link = api_client.post(f'{api_url}/launch', json=payload)
+        assert bad_link.status_code == 422
+
+        payload = _launch_payload(sim_id, str(uuid.uuid4()), suffix='INVIMG')
+        payload['image_id'] = str(uuid.uuid4())
+        missing_image = api_client.post(f'{api_url}/launch', json=payload)
+        assert missing_image.status_code == 422 and 'upload your token image again' in missing_image.text.lower()
+    finally:
+        api_client.delete(f'{api_url}/simulations/{sim_id}')
+
+
+def test_launch_idempotency_and_conflict_for_same_request_id(api_client, api_url):
+    sim_id = _new_simulation(api_client, api_url)
+    try:
+        request_id = str(uuid.uuid4())
+        payload = _launch_payload(sim_id, request_id, suffix='IDEMP1')
+
+        first = api_client.post(f'{api_url}/launch', json=payload)
+        assert first.status_code == 201
+        first_data = first.json()
+        assert first_data['id'] and first_data['is_launched'] is True and first_data['holders'] == 0
+
+        duplicate_same = api_client.post(f'{api_url}/launch', json=payload)
+        assert duplicate_same.status_code in (200, 201)
+        assert duplicate_same.json()['id'] == first_data['id']
+
+        changed = payload | {'name': 'TEST_AUTO_conflicting_name'}
+        duplicate_changed = api_client.post(f'{api_url}/launch', json=changed)
+        assert duplicate_changed.status_code == 409
+    finally:
+        api_client.delete(f'{api_url}/simulations/{sim_id}')
+
+
+def test_launch_concurrent_duplicate_requests_create_single_project(api_client, api_url):
+    sim_id = _new_simulation(api_client, api_url)
+    try:
+        request_id = str(uuid.uuid4())
+        payload = _launch_payload(sim_id, request_id, suffix='CONCUR')
+
+        def _post_launch():
+            return api_client.post(f'{api_url}/launch', json=payload)
+
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            responses = list(pool.map(lambda _: _post_launch(), [0, 1]))
+
+        statuses = [r.status_code for r in responses]
+        ids = [r.json()['id'] for r in responses if r.status_code in (200, 201)]
+        assert all(s in (200, 201) for s in statuses)
+        assert len(set(ids)) == 1
+    finally:
+        api_client.delete(f'{api_url}/simulations/{sim_id}')
 
 
 def test_upload_rejects_invalid_mime(api_client, api_url):
@@ -142,60 +220,43 @@ def test_missing_file_returns_404(api_client, api_url):
     assert response.status_code == 404
 
 
-def test_create_get_update_delete_draft_persistence(api_client, api_url):
-    suffix = str(uuid.uuid4())[:6]
-    payload = _draft_payload(suffix)
-
-    created = api_client.post(f'{api_url}/drafts', json=payload)
-    assert created.status_code == 201
-    draft_id = created.json()['id']
-
-    fetched = api_client.get(f'{api_url}/drafts/{draft_id}')
-    assert fetched.status_code == 200 and fetched.json()['trading_pair'] == f"{payload['ticker']}/SOL"
-
-    updated_payload = payload | {'mode': 'BURN', 'global_asset': 'BONK'}
-    updated = api_client.put(f'{api_url}/drafts/{draft_id}', json=updated_payload)
-    assert updated.status_code == 200 and updated.json()['mode'] == 'BURN'
-
-    refetched = api_client.get(f'{api_url}/drafts/{draft_id}')
-    assert refetched.status_code == 200 and refetched.json()['global_asset'] == 'BONK'
-
-    deleted = api_client.delete(f'{api_url}/drafts/{draft_id}')
-    assert deleted.status_code == 204
-
-    missing = api_client.get(f'{api_url}/drafts/{draft_id}')
-    assert missing.status_code == 404
+def test_drafts_removed_endpoints_return_404(api_client, api_url):
+    missing_id = str(uuid.uuid4())
+    payload = {
+        'name': 'Old draft',
+        'ticker': 'OLD',
+        'description': 'legacy payload',
+        'target_sol': 1,
+        'asset': 'SOL',
+        'global_asset': 'SOL',
+        'mode': 'SHARE',
+    }
+    assert api_client.post(f'{api_url}/drafts', json=payload).status_code == 404
+    assert api_client.get(f'{api_url}/drafts/{missing_id}').status_code == 404
+    assert api_client.put(f'{api_url}/drafts/{missing_id}', json=payload).status_code == 404
+    assert api_client.delete(f'{api_url}/drafts/{missing_id}').status_code == 404
 
 
-def test_draft_validation_rejects_bad_ticker_and_bad_https(api_client, api_url):
-    payload = _draft_payload('BAD1')
-    payload['ticker'] = 'bad'
-    bad_ticker = api_client.post(f'{api_url}/drafts', json=payload)
-    assert bad_ticker.status_code == 422
+def test_projects_and_detail_do_not_leak_internal_launch_fields(api_client, api_url):
+    sim_id = _new_simulation(api_client, api_url)
+    try:
+        payload = _launch_payload(sim_id, str(uuid.uuid4()), suffix='LEAKCHK')
+        launched = api_client.post(f'{api_url}/launch', json=payload)
+        assert launched.status_code == 201
+        launched_row = launched.json()
+        for key in ('_id', 'creator_demo_id', 'launch_fingerprint', 'launch_request_id'):
+            assert key not in launched_row
 
-    payload = _draft_payload('BAD2')
-    payload['website'] = 'http://insecure.com'
-    bad_link = api_client.post(f'{api_url}/drafts', json=payload)
-    assert bad_link.status_code == 422
+        listed = api_client.get(f"{api_url}/projects", params={'sort': 'newest'})
+        assert listed.status_code == 200
+        created = next((x for x in listed.json() if x['id'] == launched_row['id']), None)
+        assert created is not None
+        for key in ('_id', 'creator_demo_id', 'launch_fingerprint', 'launch_request_id'):
+            assert key not in created
 
-
-def test_draft_validation_rejects_non_positive_or_non_finite(api_client, api_url):
-    payload = _draft_payload('NUM1')
-    payload['target_sol'] = 0
-    zero = api_client.post(f'{api_url}/drafts', json=payload)
-    assert zero.status_code == 422
-
-    payload = _draft_payload('NUM2')
-    payload['target_sol'] = 1000001
-    over_max = api_client.post(f'{api_url}/drafts', json=payload)
-    assert over_max.status_code == 422
-
-    payload = _draft_payload('NUM3')
-    payload['target_sol'] = 'inf'
-    non_finite = api_client.post(f'{api_url}/drafts', json=payload)
-    assert non_finite.status_code == 422
-
-
-def test_missing_draft_returns_404(api_client, api_url):
-    response = api_client.get(f'{api_url}/drafts/{uuid.uuid4()}')
-    assert response.status_code == 404
+        detail = api_client.get(f"{api_url}/projects/{launched_row['id']}")
+        assert detail.status_code == 200
+        for key in ('_id', 'creator_demo_id', 'launch_fingerprint', 'launch_request_id'):
+            assert key not in detail.json()
+    finally:
+        api_client.delete(f'{api_url}/simulations/{sim_id}')

@@ -1,17 +1,22 @@
-import {useRef} from 'react';
 import {Link} from 'react-router-dom';
-import {motion,useScroll,useTransform,useReducedMotion} from 'framer-motion';
-import {ArrowUpRight,ArrowRight,Check,MoveDown,Sparkles} from 'lucide-react';
+import {motion} from 'framer-motion';
+import {ArrowUpRight,ArrowRight,Sparkles} from 'lucide-react';
 import {EditorialMarquee} from './EditorialMarquee';
-const HERO='/images/plain-paperbag.jpeg';
-export const Hero=()=>{
- const ref=useRef(null);const reduced=useReducedMotion();const{scrollYProgress}=useScroll({target:ref,offset:['start start','end start']});const y=useTransform(scrollYProgress,[0,1],[0,reduced?0:70]);
- return <><section ref={ref} className="hero page-width" data-testid="hero-section">
-  <div className="hero-copy"><motion.div className="eyebrow" initial={{opacity:0}} animate={{opacity:1}} transition={{delay:.1}} data-testid="hero-eyebrow"><i className="status-dot"/> BUILT ON SOLANA. MADE TO CARRY.</motion.div>
-   <h1 data-testid="hero-heading"><span className="line-mask"><motion.span initial={{y:'110%'}} animate={{y:0}} transition={{duration:.9,ease:[.22,1,.36,1],delay:.15}}>BIG IDEAS.</motion.span></span><span className="line-mask"><motion.span initial={{y:'110%'}} animate={{y:0}} transition={{duration:.9,ease:[.22,1,.36,1],delay:.3}}>FULL <span className="highlight">BAGS.<svg viewBox="0 0 330 20" aria-hidden="true"><path d="M3 9Q159 0 325 9M30 17Q150 9 291 16"/></svg></span></motion.span></span></h1>
-   <motion.div initial={{opacity:0,y:15}} animate={{opacity:1,y:0}} transition={{delay:.65,duration:.7}}><p className="hero-tagline" data-testid="hero-tagline">Every token carries a bag.</p><p className="hero-description" data-testid="hero-description">Launch through Paperbag, choose what your Bag carries,<br className="desktop-break"/> and let trading activity fill it.</p><div className="hero-actions"><Link to="/launch" className="button primary large" data-testid="hero-launch">Launch a token <ArrowUpRight size={19}/></Link><Link to="/bags" className="text-link" data-testid="hero-explore">Explore tokens <ArrowRight size={17}/></Link></div><div className="trust-row" data-testid="hero-trust"><span><Check/>Your idea.</span><span><Check/>Your token.</span><span><Check/>Your Bag.</span></div></motion.div>
-  </div>
-  <motion.div style={{y}} className="hero-art" initial={{opacity:0,scale:.9}} animate={{opacity:1,scale:1}} transition={{duration:1.1,delay:.25}}><div className="art-grid"/><span className="hand-note hero-note" data-testid="hero-note">a little bag.<br/>a bigger possibility.<svg viewBox="0 0 80 50"><path d="M6 3q-6 35 64 32m-12-12 12 12-16 9"/></svg></span><motion.img className="hero-photo" src={HERO} alt="A plain, unprinted kraft paper bag" data-testid="hero-plain-paperbag" fetchPriority="high" animate={reduced?{}:{y:[0,-9,0],rotate:[-2,0,-2]}} transition={{duration:7,repeat:Infinity,ease:'easeInOut'}}/><div className="good-sticker" data-testid="hero-sticker"><Sparkles size={19}/><b>GOOD THINGS<br/>INSIDE.</b><span>HANDLE WITH IDEAS</span></div><div className="filling-sticker" data-testid="hero-bag-progress"><span><i className="status-dot"/> YOUR BAG IS FILLING</span><div><b>74<span>%</span></b><img src="/bag-mark.svg" alt=""/></div><div className="mini-progress"><i style={{width:'74%'}}/></div><small>A little more activity. A fuller Bag.</small></div><Sparkles className="art-sparkle" size={32} strokeWidth={1}/><span className="hero-art-caption" data-testid="hero-art-caption">PACKED WITH POSSIBILITY. NOT PROMISES.</span></motion.div>
-  <a className="scroll-note" href="#bags" data-testid="hero-scroll"><MoveDown size={14}/> FIND YOUR NEXT BAG</a>
- </section><EditorialMarquee/></>;
-};
+
+export const Hero=()=> <>
+ <section className="paper-hero" style={{'--workshop-scene':"url('/images/paper-workshop.png')"}} data-testid="hero-section">
+  <div className="hero-margin-notes" aria-hidden="true"><span>FIELD NOTES / No. 001</span><span>A LITTLE ECOSYSTEM<br/>WITH BIG IDEAS.</span><img src="/bag-mark.svg" alt=""/><span>HANDLE WITH<br/>POSSIBILITY.</span></div>
+  <motion.div className="paper-hero-copy" initial={{opacity:0,y:14}} animate={{opacity:1,y:0}} transition={{duration:.65}}>
+   <span className="hero-stamp" data-testid="hero-eyebrow"><Sparkles size={13}/> THE LITTLE TOKEN WORKSHOP</span>
+   <div className="sketch-wordmark" data-testid="hero-wordmark">Paperbag<span>®</span></div>
+   <h1 data-testid="hero-heading">Every Token Has a <span>Bag Worker.</span></h1>
+   <p data-testid="hero-description">Big ideas start on paper.<br/>Launch a token. Fill a Bag. Put possibility to work.</p>
+   <div className="paper-hero-actions"><Link to="/launch" className="button primary large" data-testid="hero-launch">Launch a token <ArrowUpRight size={18}/></Link><Link to="/bags" className="button large" data-testid="hero-explore">Explore Bags <ArrowRight size={17}/></Link></div>
+   <Link to="/ecosystem" className="hand-note hero-how-link" data-testid="hero-how-it-works">wait, how does it work? ↗</Link>
+  </motion.div>
+  <div className="scene-label scene-label-left" data-testid="hero-scene-note">ideas go in. <span>↘</span></div>
+  <div className="scene-label scene-label-right" data-testid="hero-scene-label"><span>↖</span> good things come out.</div>
+  <span className="hero-demo-stamp" data-testid="hero-demo-notice">PAPER WORKSHOP · DEMO EDITION</span>
+ </section>
+ <EditorialMarquee/>
+</>;

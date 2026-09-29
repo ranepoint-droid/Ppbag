@@ -1,106 +1,179 @@
 {
-  "project_name": "Paperbag Launchpad (Ppb)",
-  "design_archetype": "ORGANIC & EARTHY / TACTILE KRAFT",
-  "theme": "Light Theme Default (Warm Kraft Sand & Deep Charcoal)",
-  "color_palette": {
-    "background": {
-      "primary": "#faf7ed",
-      "surface": "#f3ebd9",
-      "card": "#ffffff",
-      "card_accent": "#f5eedc",
-      "dark_surface": "#2c2923"
-    },
-    "text": {
-      "primary": "#2c2923",
-      "secondary": "#63584c",
-      "muted": "#8c7d6b",
-      "inverse": "#faf7ed"
-    },
-    "borders": {
-      "subtle": "#e8e0cc",
-      "medium": "#d8d0bc",
-      "dark": "#393127"
-    },
-    "brand_accents": {
-      "kraft_gold": "#c99b63",
-      "kraft_dark": "#725337",
-      "sol_purple": "#9945FF",
-      "sol_green": "#14F195",
-      "warning": "#e17055",
-      "success": "#27ae60"
-    }
+  "project_name": "Paperbag Launchpad - Paper Art Redesign",
+  "archetype": "ORGANIC & CRAFT PAPER SKETCH ART",
+  "concept_description": "A 2D hand-drawn paper sketch & doodle art Solana token launchpad aesthetic inspired by parasiteonsol.fun composition logic (immersive background scene, outlined ledger specimen modules, scribbled labels, staple/tape accents, handwritten callouts) without pixel art. Expressive plain paperbag visual language.",
+  "headline_requirement": {
+    "target_text": "Every Token Has a Bag Worker",
+    "previous_text": "Meet Bag Worker",
+    "usage": "Must be prominently displayed in the Hero section, Bag Worker standalone page, and homepage introduction sections."
   },
   "typography": {
-    "heading_font": "Cabinet Grotesk, sans-serif / DM Sans, sans-serif",
-    "body_font": "DM Sans, sans-serif",
-    "mono_font": "JetBrains Mono, monospace",
-    "handwriting_accent": "Caveat, cursive",
-    "sizes": {
-      "h1": "text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight",
-      "h2": "text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-tight",
-      "h3": "text-xl sm:text-2xl font-semibold",
-      "body": "text-base leading-relaxed",
-      "caption": "text-sm text-muted uppercase tracking-wider"
+    "font_family_heading": "Space Grotesk, sans-serif",
+    "font_family_handwritten": "Caveat, cursive",
+    "font_family_body": "DM Sans, sans-serif",
+    "font_family_mono": "Space Grotesk, monospace",
+    "headings_rules": {
+      "h1": "text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#1e1b18] uppercase",
+      "h2": "text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-[#1e1b18]",
+      "h3": "text-xl sm:text-2xl font-bold text-[#1e1b18]",
+      "handwritten_callout": "font-handwritten text-2xl sm:text-3xl text-[#8c6d48] -rotate-2"
+    },
+    "forbidden_fonts": ["Inter", "Roboto", "Open Sans"]
+  },
+  "color_palette": {
+    "background_craft": "#f4efe4",
+    "background_card": "#faf7f0",
+    "background_parchment": "#ebd8be",
+    "charcoal_ink": "#1e1b18",
+    "kraft_brown": "#8c6d48",
+    "highlighter_yellow": "#ffdd00",
+    "blueprint_blue": "#1d3557",
+    "ink_red": "#d90429",
+    "tape_cream": "#f3e9d2",
+    "border_ink": "#1e1b18",
+    "shadow_ink": "#1e1b18",
+    "tinted_greys": {
+      "muted_bg": "#e8e1d3",
+      "muted_text": "#5c5346"
     }
   },
-  "paperbag_artwork_requirement": {
-    "rule": "CRITICAL: NO FACES ON PAPERBAGS. All paperbag illustrations, hero photos, icons, and SVG components must be plain kraft paper bag graphics with NO facial features (no eyes, mouth, blush, or smile).",
-    "component_update": "BagArt component must render face={false} strictly. Hero image must use a clean, plain kraft paper bag image.",
-    "plain_paperbag_image_url": "https://images.unsplash.com/photo-1712402832925-d41c446883d3?crop=entropy&cs=srgb&fm=jpg&q=85"
+  "paper_art_design_system": {
+    "card_style": "bg-[#faf7f0] border-2 border-[#1e1b18] shadow-[4px_4px_0px_0px_#1e1b18] rounded-[4px_12px_6px_10px] relative overflow-hidden transition-all duration-200",
+    "button_primary_style": "bg-[#ffdd00] text-[#1e1b18] font-bold border-2 border-[#1e1b18] shadow-[3px_3px_0px_0px_#1e1b18] hover:shadow-[5px_5px_0px_0px_#1e1b18] hover:-translate-x-[2px] hover:-translate-y-[2px] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0px_0px_#1e1b18] px-5 py-2.5 rounded-[4px_10px_4px_8px] transition-all",
+    "button_secondary_style": "bg-[#faf7f0] text-[#1e1b18] font-semibold border-2 border-[#1e1b18] shadow-[3px_3px_0px_0px_#1e1b18] hover:bg-[#ebd8be] hover:-translate-x-[1px] hover:-translate-y-[1px] hover:shadow-[4px_4px_0px_0px_#1e1b18] px-4 py-2 rounded-[6px_4px_8px_4px] transition-all",
+    "input_style": "bg-[#f4efe4] border-2 border-[#1e1b18] text-[#1e1b18] placeholder:text-[#8c6d48]/70 px-4 py-2.5 rounded-[4px_8px_4px_6px] focus:outline-none focus:ring-2 focus:ring-[#ffdd00] shadow-[inner_2px_2px_0px_0px_rgba(30,27,24,0.1)]",
+    "badge_tape_style": "bg-[#f3e9d2] text-[#1e1b18] border border-[#1e1b18]/40 px-3 py-1 font-mono text-xs uppercase tracking-wider rounded-sm shadow-[1px_1px_0px_rgba(0,0,0,0.1)] -rotate-1 inline-block",
+    "staple_accent": "absolute top-2 right-4 w-6 h-1 bg-[#8c6d48]/40 border border-[#1e1b18] rotate-12 pointer-events-none",
+    "scribble_line": "svg hand-drawn wavy/zigzag divider with stroke-width 2 and charcoal ink color"
   },
-  "routes_and_navigation": {
-    "top_level_routes": [
-      { "path": "/", "name": "Home", "description": "Landing page with hero, overview stats, token carousel/grid, Bag Worker preview section, Global Bag preview section, How It Works, and CTA." },
-      { "path": "/bags", "name": "Explore Tokens", "description": "Token discovery search, filters, sorting, and responsive grid/list." },
-      { "path": "/token/:id", "name": "Token Detail", "description": "Individual token trading page with price chart, practice buy/sell panel, activity stream, and bag progress." },
-      { "path": "/bag-worker", "name": "Bag Worker", "description": "Dedicated independent page explaining automated ecosystem yield, Carry node simulation, profit distribution, and status logs." },
-      { "path": "/global-bag", "name": "Global Bag", "description": "Dedicated independent page detailing shared ecosystem asset vaults (SOL, USDC, DOGE, BONK), distribution countdown, and $PAPERBAG 80/20 mechanism." },
-      { "path": "/leaderboard", "name": "Leaderboard", "description": "Rankings for top bags, volume, profits, and fast openers." },
-      { "path": "/launch", "name": "Launch a Token", "description": "Draft creation flow with token image upload, bag target settings, and preview." }
-    ],
-    "header_nav_links": [
-      { "label": "Bags", "url": "/bags", "testid": "nav-bags" },
-      { "label": "Bag Worker", "url": "/bag-worker", "testid": "nav-bag-worker" },
-      { "label": "Global Bag", "url": "/global-bag", "testid": "nav-global-bag" },
-      { "label": "Leaderboard", "url": "/leaderboard", "testid": "nav-leaderboard" },
-      { "label": "$PAPERBAG", "url": "/global-bag#paperbag", "testid": "nav-paperbag" },
-      { "label": "Launch", "url": "/launch", "testid": "nav-launch" }
+  "launchpad_flow": {
+    "draft_status": "REMOVED completely as requested. No drafts or staging state.",
+    "new_flow_description": "Wallet Mockup Connection -> Enter Token Metadata & Bag Art -> Direct Deploy Action -> Instant Persistence & Live Token Trading Page Redirect",
+    "steps": [
+      {
+        "step": 1,
+        "title": "Connect Wallet (Mockup)",
+        "action": "Simulate Phantom / Solflare wallet connection with 1-click modal. Displays fake address (e.g. 7xKP...9qL2) and balance (14.85 SOL).",
+        "data_testid": "wallet-connect-button"
+      },
+      {
+        "step": 2,
+        "title": "Token Paper Specification",
+        "action": "Input Name, Symbol, Description, Telegram, Twitter, Website, Initial Buy SOL amount, and Plain Paperbag artwork selection/upload.",
+        "data_testid": "launch-token-form"
+      },
+      {
+        "step": 3,
+        "title": "Deploy & Launch Token",
+        "action": "Click 'Deploy Token Now'. Executes mock bonding curve deployment, immediately saves token to MongoDB/backend, fires toast notification, and navigates immediately to /token/:id.",
+        "data_testid": "deploy-token-button"
+      }
     ]
   },
-  "home_page_sections": {
-    "hero": "Main headline 'BIG IDEAS. FULL BAGS.' with plain paperbag hero visual and floating status badges.",
-    "stats_overview": "Live/simulated token metrics (tokens, volume, bags opened).",
-    "token_grid": "Featured token cards with search, filter tabs, and quick trade link.",
-    "bag_worker_explanatory_section": {
-      "title": "MEET THE BAG WORKER",
-      "copy": "Automated ecosystem engine that puts platform revenue to work for active tokens. Realized profits fill project bags.",
-      "cta": "Explore Bag Worker System",
-      "cta_link": "/bag-worker",
-      "testid": "home-bag-worker-section"
+  "layout_and_navigation": {
+    "header": {
+      "style": "sticky top-0 z-50 bg-[#f4efe4]/90 backdrop-blur-md border-b-2 border-[#1e1b18] px-4 py-3 flex items-center justify-between",
+      "logo": "Plain paperbag sketch SVG icon + 'PAPERBAG' in bold Space Grotesk font with hand-drawn yellow highlighter backdrop",
+      "nav_links": [
+        {"label": "Bags", "path": "/bags", "data_testid": "nav-link-bags"},
+        {"label": "Bag Worker", "path": "/bag-worker", "data_testid": "nav-link-bag-worker"},
+        {"label": "Global Bag", "path": "/global-bag", "data_testid": "nav-link-global-bag"},
+        {"label": "Leaderboard", "path": "/leaderboard", "data_testid": "nav-link-leaderboard"},
+        {"label": "Ecosystem", "path": "/ecosystem", "data_testid": "nav-link-ecosystem"}
+      ],
+      "actions": [
+        {"label": "Deploy Token", "path": "/launch", "data_testid": "nav-launch-button"},
+        {"label": "Connect Wallet", "type": "wallet_mockup_modal", "data_testid": "nav-connect-wallet-button"}
+      ]
     },
-    "global_bag_explanatory_section": {
-      "title": "THE GLOBAL BAG VAULTS",
-      "copy": "Shared community vaults holding SOL, USDC, DOGE, and BONK funded by every launch, distributed to $PAPERBAG holders every 24 hours.",
-      "cta": "View Global Bag Vaults",
-      "cta_link": "/global-bag",
-      "testid": "home-global-bag-section"
-    },
-    "how_it_works": "Interactive 5-stage paperbag cycle animation.",
-    "launch_cta": "Call to action banner to draft or launch a token."
+    "footer": {
+      "style": "bg-[#1e1b18] text-[#f4efe4] border-t-4 border-[#ffdd00] py-12 px-6 mt-20 relative",
+      "branding": "PAPERBAG LAUNCHPAD - Every Token Has a Bag Worker",
+      "copyright": "2026 Paperbag Protocol. Plain Bag Standard."
+    }
   },
-  "general_ui_ux_guidelines": {
-    "accessibility": "All interactive elements, buttons, nav links, forms, and cards MUST include data-testid attributes.",
-    "headers_and_nav": "Site header MUST use backdrop-blur-md bg-[#faf7ed]/90 with border-b border-[#e8e0cc]. NEVER use fully transparent background on overlays, modals, or dropdown menus.",
-    "spacing": "Maintain generous padding (p-6, p-8, p-12) and gaps (gap-6, gap-8) across containers to ensure legibility and clean mobile layouts.",
-    "mobile_responsiveness": "Ensure grid-cols-1 on mobile scaling smoothly to grid-cols-2 or grid-cols-3 on desktop.",
-    "animations": "Micro-interactions with framer-motion for smooth hover states, status transitions, and progress fill bars."
+  "key_routes_and_pages": {
+    "home_page": {
+      "path": "/",
+      "sections": [
+        "Hero with 'Every Token Has a Bag Worker' title, 2D paper art scenery background, instant launch CTA & search box",
+        "Live Market Stats specimen ledger (Total Market Cap, 24h Volume, Active Bag Workers, Global Vault)",
+        "Featured Tokens paper catalog grid",
+        "Bag Worker Explanation section with hand-drawn worker diagram and workflow steps",
+        "Global Bag Explanation section with 4 asset vaults ledger summary",
+        "How It Works 4-step paper fold guide"
+      ]
+    },
+    "bags_page": {
+      "path": "/bags",
+      "features": "Search ink input, 8 sorting tabs (Market Cap, Volume, Newest, Progress, etc.), Grid/List view switch, Paper specimen card for each token with plain paperbag artwork, market cap, bonding curve progress bar"
+    },
+    "token_page": {
+      "path": "/token/:id",
+      "features": "Lightweight Charts trading chart styled with kraft/paper palette, Token Specimen Header with social links, Virtual Buy/Sell Trade Panel (SOL to Token swap simulation), Activity Feed ledger, Holder list, Bag Worker progress status"
+    },
+    "launch_page": {
+      "path": "/launch",
+      "features": "Wallet Mockup status panel + 1-step Deploy Form (No drafts!). Instant creation with direct redirect to /token/:id"
+    },
+    "bag_worker_page": {
+      "path": "/bag-worker",
+      "features": "Dedicated Bag Worker page with animated paper-sketch gear worker graphic, worker status nodes, risk statement paper notice, 3-step worker explanation, link to Global Bag"
+    },
+    "global_bag_page": {
+      "path": "/global-bag",
+      "features": "Dedicated Global Bag page with 4 paper vault records, 24-hour cycle transparency rules, 80/20 native PAPERBAG distribution, link to Bag Worker"
+    },
+    "leaderboard_page": {
+      "path": "/leaderboard",
+      "features": "Hand-drawn paper podium ledger with Top Gainers, Highest Market Cap, Most Active Workers, Global Contributors tabs"
+    },
+    "ecosystem_page": {
+      "path": "/ecosystem",
+      "features": "Interactive paper accordion FAQ and Bag-cycle animation diagram"
+    }
+  },
+  "asset_prompts_and_svgs": {
+    "hero_background_scenery": "Hand-drawn 2D paper sketch art scene of a paper factory landscape with conveyor belts, paper bags moving, sketch clouds, tape strips, and blueprint grid guidelines in charcoal ink and warm beige tones.",
+    "plain_paperbag_art": "Simple 2D hand-drawn brown kraft paper bag doodle with folded top handles, raw sketch lines, zero face features, zero logos, crisp paper texture.",
+    "bag_worker_machinery": "Hand-drawn sketch illustration of a paper press machine processing kraft paper bags with gears, ink stamps, and measurement gauges.",
+    "global_vault_art": "Hand-drawn sketch illustration of four heavy paper-vault safes tied with rope and sealed with wax stamps."
+  },
+  "testing_and_data_testid_requirements": {
+    "rules": "All interactive elements (buttons, inputs, links, tabs, trade actions, modals) MUST have unique kebab-case data-testid attributes.",
+    "required_ids": [
+      "nav-link-bags",
+      "nav-link-bag-worker",
+      "nav-link-global-bag",
+      "nav-link-leaderboard",
+      "nav-link-ecosystem",
+      "nav-launch-button",
+      "nav-connect-wallet-button",
+      "wallet-connect-button",
+      "wallet-modal-close",
+      "hero-title",
+      "hero-launch-cta",
+      "hero-explore-cta",
+      "bags-search-input",
+      "bags-sort-dropdown",
+      "token-trade-buy-tab",
+      "token-trade-sell-tab",
+      "token-trade-amount-input",
+      "token-trade-submit-button",
+      "launch-token-form",
+      "deploy-token-button",
+      "bag-worker-status-card",
+      "global-bag-vault-card"
+    ]
   },
   "instructions_to_main_agent": [
-    "1. Replace facial paperbag artwork with plain paperbag assets (face={false} on BagArt component, replace hero photo with plain paperbag URL).",
-    "2. Rename 'Carry' terminology to 'Bag Worker' across all UI labels, copy, buttons, navigation links, and subheaders.",
-    "3. Implement independent pages for /bag-worker and /global-bag in App.js router and page definitions.",
-    "4. On the Home page (/), add clean explanatory sections for 'Bag Worker' and 'Global Bag' linking directly to /bag-worker and /global-bag.",
-    "5. Tidy up messy page layouts: improve header alignment, balance card paddings, fix text overlaps, ensure clean responsive mobile views.",
-    "6. Ensure all test IDs specified in test files (site-header, brand-home, nav-*, hero-*, wallet-dialog, etc.) are strictly preserved."
+    "1. Replace 'Meet Bag Worker' headline with 'Every Token Has a Bag Worker' across all relevant components (Hero, BagWorkerPage, HomeEcosystem, PRD copy).",
+    "2. Remove all draft logic and draft storage from /launch flow. Replace it with a streamlined wallet mockup connection modal + token detail form + Instant 'Deploy Token' action that immediately persists the token in MongoDB and redirects to /token/:id.",
+    "3. Apply a cohesive 2D hand-drawn paper art & sketch/doodle aesthetic throughout all sections: ink outlines (border-2 border-[#1e1b18]), offset box shadows (shadow-[4px_4px_0px_0px_#1e1b18]), paper texture background (#f4efe4), handwritten annotations (Caveat font with slight rotation), tape & staple decorative accents, and specimen ledger cards.",
+    "4. Ensure ALL paperbag images and SVG icons are strictly PLAIN kraft paper bags with NO faces or printing.",
+    "5. Keep Bag Worker (/bag-worker) and Global Bag (/global-bag) as separate independent pages, while explaining both clearly on the Home page (/)",
+    "6. Maintain full functional completeness: trading chart, virtual buy/sell simulation, holder list, activity feeds, bag progress metrics, search/filtering/sorting on /bags, and leaderboard.",
+    "7. Ensure every interactive element retains or receives a data-testid attribute.",
+    "8. Perform responsive layout adjustments so all components look clean and structured on both mobile (390px) and desktop (1920px) screens."
   ]
 }

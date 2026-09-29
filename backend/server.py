@@ -18,6 +18,8 @@ from seed import PROJECTS, VAULTS
 from storage import put_object, get_object
 from market import market_fields, create_market_router
 from simulation import create_simulation_router
+from launching import create_launch_router
+from launched_market import enrich_project
 
 client = AsyncIOMotorClient(os.environ['MONGO_URL'])
 db = client[os.environ['DB_NAME']]
@@ -25,7 +27,7 @@ db = client[os.environ['DB_NAME']]
 @asynccontextmanager
 async def lifespan(app):
     await db.projects.create_index('id', unique=True)
-    await db.drafts.create_index('id', unique=True)
+    await db.projects.create_index('launch_request_id', unique=True, sparse=True)
     await db.files.create_index('id', unique=True)
     await db.simulations.create_index('id', unique=True)
     for project in PROJECTS:
@@ -80,42 +82,12 @@ class Project(PublicModel):
     created_at: str
     mint_address: str | None = None
     protocol: str
-
-Asset = Literal['SOL','USDC','DOGE','SHIB','BONK']
-class DraftInput(PublicModel):
-    name: str = Field(min_length=1, max_length=32)
-    ticker: str = Field(pattern=r'^[A-Z0-9]{1,10}$')
-    description: str = Field(min_length=1, max_length=500)
     image_id: str | None = None
-    website: str = Field(default='', max_length=250)
-    twitter: str = Field(default='', max_length=250)
-    telegram: str = Field(default='', max_length=250)
-    target_sol: float = Field(gt=0, le=1000000)
-    asset: Asset
-    global_asset: Asset
-    mode: Literal['SHARE','BURN']
-
-    @field_validator('name','description')
-    @classmethod
-    def clean_text(cls, value):
-        if not value.strip():
-            raise ValueError('Please enter a value')
-        return value.strip()
-
-    @field_validator('website','twitter','telegram')
-    @classmethod
-    def safe_link(cls, value):
-        from urllib.parse import urlparse
-        if value and (urlparse(value).scheme != 'https' or not urlparse(value).netloc):
-            raise ValueError('Use a complete HTTPS link')
-        return value
-
-class Draft(DraftInput):
-    id: str
-    status: str = 'draft'
-    created_at: str
-    updated_at: str
-    trading_pair: str
+    website: str = ''
+    twitter: str = ''
+    telegram: str = ''
+    global_asset: str | None = None
+    is_launched: bool = False
 
 class FileInfo(PublicModel):
     id: str
@@ -129,13 +101,14 @@ async def health():
 
 @api.get('/config')
 async def config():
-    return {'live_transactions':False, 'wallet_enabled':False, 'data_mode':'illustrative', 'assets':['SOL','USDC','DOGE','SHIB','BONK'], 'global_interval_hours':24}
+    return {'live_transactions':False, 'wallet_enabled':False, 'demo_wallet_enabled':True, 'demo_launch_enabled':True, 'data_mode':'simulation', 'assets':['SOL','USDC','DOGE','SHIB','BONK'], 'global_interval_hours':24}
 
 @api.get('/projects', response_model=list[Project])
 async def projects(sort: Literal['trending','volume','closest','opened','carry','mcap','holders','newest'] = 'trending', search: str = Query(default='', max_length=60)):
-    records = await db.projects.find({}, {'_id':0}).to_list(100)
+    records = await db.projects.find({}, {'_id':0}).sort('created_at',-1).to_list(1000)
     if search:
         records = [p for p in records if search.lower() in (p['name']+' '+p['ticker']+' '+p['asset']).lower()]
+    records = [await enrich_project(db,p) for p in records]
     keys = {'trending':lambda p:p['volume']*(1+p['progress']/100), 'volume':lambda p:p['volume'], 'closest':lambda p:p['progress'], 'opened':lambda p:p['cycle']-1, 'carry':lambda p:(p['carry_status']=='Active',p['carry_pnl'])}
     keys.update({'mcap':lambda p:p['market_cap'],'holders':lambda p:p['holders'],'newest':lambda p:p['created_at']})
     return sorted(records, key=keys[sort], reverse=True)
@@ -145,11 +118,11 @@ async def project(project_id: str):
     result = await db.projects.find_one({'id':project_id}, {'_id':0})
     if not result:
         raise HTTPException(404,'This Bag was not found')
-    return result
+    return await enrich_project(db,result)
 
 @api.get('/overview')
 async def overview():
-    records = await db.projects.find({}, {'_id':0}).to_list(100)
+    records = [await enrich_project(db,p) for p in await db.projects.find({}, {'_id':0}).to_list(1000)]
     return {'projects':len(records),'bags_opened':sum(p['cycle']-1 for p in records),'volume':sum(p['volume'] for p in records),'carry_profit':round(sum(p['carry_added'] for p in records),2),'data_mode':'illustrative'}
 
 @api.get('/global')
@@ -162,45 +135,10 @@ async def native_bag():
 
 @api.get('/leaderboard', response_model=list[Project])
 async def leaderboard(category: Literal['opened','biggest','fastest','profits','active'] = 'opened'):
-    records = await db.projects.find({}, {'_id':0}).to_list(100)
+    records = [await enrich_project(db,p) for p in await db.projects.find({}, {'_id':0}).to_list(1000)]
     key = {'opened':'cycle','biggest':'target_sol','fastest':'fastest_hours','profits':'carry_pnl','active':'volume'}[category]
+    if category=='fastest': records=[p for p in records if p['fastest_hours']>0]
     return sorted(records,key=lambda p:p[key],reverse=category!='fastest')[:5]
-
-async def validate_image(data):
-    if data.image_id and not await db.files.find_one({'id':data.image_id,'is_deleted':False}, {'_id':0}):
-        raise HTTPException(422,'Upload your token image again')
-
-@api.post('/drafts', response_model=Draft, status_code=201)
-async def create_draft(data: DraftInput):
-    await validate_image(data)
-    now = datetime.now(timezone.utc).isoformat()
-    result = Draft(**data.model_dump(), id=str(uuid.uuid4()), created_at=now, updated_at=now, trading_pair=f'{data.ticker}/SOL')
-    await db.drafts.insert_one(result.model_dump())
-    return result
-
-@api.get('/drafts/{draft_id}', response_model=Draft)
-async def get_draft(draft_id: str):
-    draft = await db.drafts.find_one({'id':draft_id}, {'_id':0})
-    if not draft:
-        raise HTTPException(404,'Draft not found')
-    return draft
-
-@api.put('/drafts/{draft_id}', response_model=Draft)
-async def update_draft(draft_id: str, data: DraftInput):
-    await get_draft(draft_id)
-    await validate_image(data)
-    await db.drafts.update_one({'id':draft_id},{'$set':{**data.model_dump(),'trading_pair':f'{data.ticker}/SOL','updated_at':datetime.now(timezone.utc).isoformat()}})
-    return await get_draft(draft_id)
-
-@api.delete('/drafts/{draft_id}', status_code=204)
-async def delete_draft(draft_id: str):
-    await get_draft(draft_id)
-    await db.drafts.delete_one({'id':draft_id})
-    return Response(status_code=204)
-
-@api.post('/launch')
-async def launch():
-    raise HTTPException(503,'Live Pump.fun launches are not configured. Your draft is safe; no transaction has been sent.')
 
 @api.post('/uploads', response_model=FileInfo, status_code=201)
 async def upload(file: UploadFile = File(...)):
@@ -235,3 +173,4 @@ async def download(file_id: str):
 app.include_router(api)
 app.include_router(create_market_router(db))
 app.include_router(create_simulation_router(db))
+app.include_router(create_launch_router(db,Project))

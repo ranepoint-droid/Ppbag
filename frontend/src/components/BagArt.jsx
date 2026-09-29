@@ -1,11 +1,12 @@
 import { useId } from 'react';
 import { motion } from 'framer-motion';
 import { Dog, Cat, Banana, Flame, Sprout } from 'lucide-react';
+import {API} from '../lib/api';
 
 export const BagArt = ({progress=60, className='', animate=false, open=false}) => {
   const id=useId().replace(/:/g,'');
   return <motion.svg className={`bag-art ${className}`} viewBox="0 0 160 180" fill="none" aria-label={`Paper bag ${Math.round(progress)}% full`} role="img" animate={animate?{rotate:[-3,2,-3],y:[0,-5,0]}:{}} transition={{duration:6,repeat:Infinity,ease:'easeInOut'}}>
-    <defs><clipPath id={id}><path d="M27 35 39 20 53 32 68 19 84 31 100 19 118 30 131 20 140 157 122 171 29 166 19 150Z"/></clipPath><pattern id={`${id}grain`} width="6" height="6" patternUnits="userSpaceOnUse"><circle cx="1" cy="2" r=".5" fill="#725337" opacity=".2"/><circle cx="5" cy="5" r=".4" fill="#725337" opacity=".2"/></pattern></defs>
+    <defs><clipPath id={id}><path d="M27 35 39 20 53 32 68 19 84 31 100 19 118 30 131 20 140 157 122 171 29 166 19 150Z"/></clipPath><pattern id={`${id}grain`} width="9" height="9" patternUnits="userSpaceOnUse"><path d="m1 8 5-5m-1 7 5-5" stroke="#725337" strokeWidth=".4" opacity=".24"/></pattern></defs>
     <ellipse cx="81" cy="174" rx="53" ry="4" fill="#33281c" opacity=".08"/>
     <path d="M27 35 39 20 53 32 68 19 84 31 100 19 118 30 131 20 140 157 122 171 29 166 19 150Z" fill="#ecddc2" stroke="#393127" strokeWidth="2.3" strokeLinejoin="round"/>
     <g clipPath={`url(#${id})`}><motion.rect x="15" width="130" height="160" fill="#c99b63" initial={false} animate={{y:170-progress*1.38}} transition={{duration:1.2,ease:'easeInOut'}}/><rect width="160" height="180" fill={`url(#${id}grain)`}/></g>
@@ -18,6 +19,6 @@ export const BagArt = ({progress=60, className='', animate=false, open=false}) =
 };
 export const TokenAvatar = ({project, small=false}) => {
   const Icon={dog:Dog,cat:Cat,ape:Banana,bonk:Flame,pepe:Sprout,wif:Dog}[project.icon]||Dog;
-  return <span className={`token-avatar ${small?'small':''}`} style={{background:project.color}} aria-hidden="true"><Icon size={small?19:25} strokeWidth={1.7}/></span>;
+  return <span className={`token-avatar ${small?'small':''}`} style={{background:project.color}} aria-hidden="true">{project.image_id?<img src={`${API}/files/${project.image_id}`} alt=""/>:project.icon==='bag'?<BagArt progress={30}/>:<Icon size={small?19:25} strokeWidth={1.5}/>}</span>;
 };
 export const Reveal = ({children,className='',delay=0,...props}) => <motion.div initial={{opacity:0,y:22}} whileInView={{opacity:1,y:0}} viewport={{once:true,amount:.12}} transition={{duration:.7,delay,ease:[.22,1,.36,1]}} className={className} {...props}>{children}</motion.div>;

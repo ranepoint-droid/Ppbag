@@ -1,9 +1,12 @@
 import {useState,useEffect} from 'react';
 import {Link,useLocation} from 'react-router-dom';
 import {Menu,X,ArrowUpRight,Wallet} from 'lucide-react';
+import {useWallet} from '../lib/wallet';
 
 export const Header=({onWallet})=>{
  const [open,setOpen]=useState(false); const location=useLocation();
+ const {connected,address,open:walletOpen}=useWallet();
+ useEffect(()=>{if(walletOpen)setOpen(false);},[walletOpen]);
  useEffect(()=>setOpen(false),[location]);
  useEffect(()=>{const close=e=>{if(e.key==='Escape')setOpen(false);};window.addEventListener('keydown',close);return()=>window.removeEventListener('keydown',close);},[]);
  const nav=[['Bags','/bags','bags'],['Bag Worker','/bag-worker','bag-worker'],['Global Bag','/global-bag','global-bag'],['Leaderboard','/leaderboard','leaderboard'],['$PAPERBAG','/global-bag#paperbag','paperbag']];
@@ -13,6 +16,6 @@ export const Header=({onWallet})=>{
    <Link to="/launch" className={location.pathname==='/launch'?'nav-active':''} data-testid="nav-launch">Launch <ArrowUpRight size={13}/></Link>
    {nav.map(([name,url,id])=><Link to={url} key={id} aria-current={location.pathname+location.hash===url?'page':undefined} className={location.pathname+location.hash===url?'nav-active':''} data-testid={`nav-${id}`}>{name}</Link>)}
   </nav>
-  <div className="header-buttons"><button className="button wallet-button" data-testid="connect-wallet" onClick={onWallet}><Wallet size={15}/><span>Connect Wallet</span></button><button className="menu-button" aria-label={open?'Close menu':'Open menu'} aria-expanded={open} aria-controls="main-navigation" onClick={()=>setOpen(!open)} data-testid="mobile-menu-toggle">{open?<X/>:<Menu/>}</button></div>
+  <div className="header-buttons"><button className={`button wallet-button ${connected?'wallet-is-connected':''}`} data-testid="connect-wallet" onClick={onWallet}><Wallet size={15}/><span>{connected?address:'Connect Wallet'}</span></button><button className="menu-button" aria-label={open?'Close menu':'Open menu'} aria-expanded={open} aria-controls="main-navigation" onClick={()=>setOpen(!open)} data-testid="mobile-menu-toggle">{open?<X/>:<Menu/>}</button></div>
  </div></header>;
 };

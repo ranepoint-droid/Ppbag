@@ -18,9 +18,10 @@ export const BagWorker=({onOpen})=>{
   <Reveal className="carry-section-inner page-width">
    <div className="carry-copy">
     <span className="eyebrow" data-testid="worker-eyebrow"><i className="status-dot"/> A LITTLE HELP. A LITTLE MORE IN THE BAG.</span>
-    <h1 data-testid="bag-worker-heading">MEET THE<br/><span>BAG WORKER.</span></h1>
+    <h1 data-testid="bag-worker-heading">Every Token Has a <span>Bag Worker.</span></h1>
     <p className="carry-lead" data-testid="bag-worker-tagline">Working for the ecosystem.<br/>One Bag at a time.</p>
     <p data-testid="bag-worker-description">Bag Worker puts Paperbag revenue to work across active projects. It follows trading activity, and only realized positive profit makes it back into a project's Bag.</p>
+    <img className="worker-page-illustration" src="/images/paper-worker.png" alt="Hand-drawn Bag Worker machinery" data-testid="worker-page-illustration"/>
     <a className="text-link light" href="#worker-process" data-testid="bag-worker-how-link">Follow the process <ArrowRight size={16}/></a>
     <div className="carry-disclaimer" data-testid="bag-worker-risk">Bag Worker takes risk. Profit isn't promised.<br/>Your Bag is never guaranteed to fill.</div>
    </div>

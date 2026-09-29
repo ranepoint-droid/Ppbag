@@ -5,6 +5,7 @@ from datetime import datetime, timezone, timedelta
 from functools import lru_cache
 from typing import Literal
 from fastapi import APIRouter, HTTPException
+from launched_market import enrich_project, demo_trades, demo_holders, demo_candles
 
 METRICS = {
  'dog': (0.00428,3812,284000,18.42,100,73),
@@ -68,16 +69,19 @@ def create_market_router(db):
     async def get_project(project_id):
         p=await db.projects.find_one({'id':project_id},{'_id':0})
         if not p: raise HTTPException(404,'Token not found')
-        return p
+        return await enrich_project(db,p)
 
     @router.get('/{project_id}/candles')
     async def candles(project_id:str,timeframe:Literal['1m','5m','15m','1h','4h']='15m'):
         p=await get_project(project_id)
-        return {'candles':chart_data(p,timeframe),'timeframe':timeframe,'snapshot':p['market_snapshot'],'data_mode':'illustrative','quote':'USD'}
+        data=await demo_candles(db,p,timeframe) if p.get('is_launched') else chart_data(p,timeframe)
+        return {'candles':data,'timeframe':timeframe,'snapshot':p['market_snapshot'],'data_mode':p['data_mode'],'quote':'USD'}
 
     @router.get('/{project_id}/trades')
     async def trades(project_id:str):
         p=await get_project(project_id)
+        if p.get('is_launched'):
+            return {'items':(await demo_trades(db,project_id))[:24],'data_mode':'simulation'}
         rng=random.Random('trades-'+project_id)
         items=[]
         for i in range(24):
@@ -88,6 +92,8 @@ def create_market_router(db):
     @router.get('/{project_id}/holders')
     async def holders(project_id:str):
         p=await get_project(project_id)
+        if p.get('is_launched'):
+            return {'total':p['holders'],'items':await demo_holders(db,p),'data_mode':'simulation'}
         distribution=[4.8,3.7,2.9,2.4,1.9,1.7,1.4,1.2,.9,.8]
         return {'total':p['holders'],'items':[{'rank':i+1,'label':f'Sample holder {i+1:03}','percentage':weight,'quantity':p['supply']*weight/100,'value_usd':p['market_cap']*weight/100} for i,weight in enumerate(distribution)],'data_mode':'illustrative'}
     return router
