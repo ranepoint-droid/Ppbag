@@ -9,7 +9,7 @@ export const Hero=()=> <>
   <motion.div className="paper-hero-copy" initial={{opacity:0,y:14}} animate={{opacity:1,y:0}} transition={{duration:.65}}>
    <span className="hero-stamp" data-testid="hero-eyebrow"><Sparkles size={13}/> THE LITTLE TOKEN WORKSHOP</span>
    <div className="sketch-wordmark" data-testid="hero-wordmark">Paperbag<span>®</span></div>
-   <h1 data-testid="hero-heading">Every Token Has a <span>Bag Worker.</span></h1>
+   <h1 data-testid="hero-heading">Every Token Carries <span>a Bag.</span></h1>
    <p data-testid="hero-description">Big ideas start on paper.<br/>Launch a token. Fill a Bag. Put possibility to work.</p>
    <div className="paper-hero-actions"><Link to="/launch" className="button primary large" data-testid="hero-launch">Launch a token <ArrowUpRight size={18}/></Link><Link to="/bags" className="button large" data-testid="hero-explore">Explore Bags <ArrowRight size={17}/></Link></div>
    <Link to="/ecosystem" className="hand-note hero-how-link" data-testid="hero-how-it-works">wait, how does it work? ↗</Link>

@@ -1,6 +1,7 @@
 import {Link} from 'react-router-dom';
-import {ArrowUpRight,ArrowRight,Clock,Users} from 'lucide-react';
+import {ArrowUpRight,ArrowRight} from 'lucide-react';
 import {Reveal} from './BagArt';
+import {GlobalBagFlow} from './GlobalBagFlow';
 
 export const HomeEcosystem=()=> <div className="home-ecosystem">
  <section className="home-worker-band" data-testid="home-bag-worker-section"><div className="page-width home-feature-grid">
@@ -9,6 +10,15 @@ export const HomeEcosystem=()=> <div className="home-ecosystem">
  </div></section>
  <section className="page-width home-feature-grid home-global-section" data-testid="home-global-bag-section">
   <Reveal className="vault-sketch-visual"><img src="/images/paper-vaults.png" alt="2D paper vaults sharing coins with one larger bag" loading="lazy" data-testid="home-global-illustration"/><div className="home-vault-tags" data-testid="home-global-assets">{['SOL','USDC','DOGE','BONK'].map(a=><span key={a} data-testid={`home-vault-${a.toLowerCase()}`}>{a}</span>)}</div><span className="hand-note vault-annotation">many little contributions. one bigger picture.</span></Reveal>
-  <Reveal className="home-feature-copy" delay={.1}><span className="paper-tab" data-testid="home-global-eyebrow">FIELD NOTE 02 / THE SHARED ONE</span><h2 data-testid="home-global-heading">Good things<br/>go around.</h2><p className="feature-name" data-testid="home-global-name">The Global Bag.</p><p data-testid="home-global-description">Every project adds a little something. Global Bag brings those contributions together in shared asset vaults for eligible $PAPERBAG holders.</p><p data-testid="home-global-distribution">No fill target. No reset. Just a shared pocket, designed around a 24-hour distribution cycle.</p><div className="sketch-global-facts"><span data-testid="home-global-cadence"><Clock size={17}/> Every 24 hours</span><span data-testid="home-global-beneficiaries"><Users size={17}/> For the holders</span></div><Link to="/global-bag" className="button" data-testid="home-global-bag-link">Unpack the Global Bag <ArrowUpRight size={17}/></Link><small data-testid="home-global-status">Illustrative vaults. Live distributions have not started.</small></Reveal>
+  <Reveal className="home-feature-copy" delay={.1}>
+   <span className="paper-tab" data-testid="home-global-eyebrow">FIELD NOTE 02 / THE SHARED ONE</span>
+   <h2 data-testid="home-global-heading">GLOBAL BAG</h2>
+   <p data-testid="home-global-description">Every project contributes to Global Bag.</p>
+   <p data-testid="home-global-distribution">Every 24 hours, Global Bag is distributed to $PAPERBAG holders and eligible project creators.</p>
+   <GlobalBagFlow id="home-global-flow"/>
+   <p className="global-creator-note" data-testid="home-global-creator-eligibility">Creators who launch and keep their projects active have a reason to be part of the ecosystem too — not just token holders.</p>
+   <Link to="/global-bag" className="button" data-testid="home-global-bag-link">Unpack the Global Bag <ArrowUpRight size={17}/></Link>
+   <small data-testid="home-global-status">Illustrative vaults. Live distributions have not started.</small>
+  </Reveal>
  </section>
 </div>;

@@ -279,3 +279,29 @@ li[data-sonner-toast]{max-width:100%;box-sizing:border-box}
  .brand>span{font-size:23px}.brand small{font-size:4.5px}.header-inner{gap:8px}.header-buttons{gap:7px}.wallet-button{padding-inline:8px;font-size:8px}.sketch-wordmark{font-size:81px}.paper-hero h1{font-size:23px}.paper-hero-actions .button{padding:11px 13px}.home-feature-copy h2{font-size:41px}.footer-wordmark{font-size:55px}.inline-carry{font-size:8px}.market-bag-card .bag-card-footer>span:last-child{font-size:9px}.form-section-heading h2{font-size:25px}.launch-paper-form{padding-inline:17px}.activity-tabs{gap:10px}.activity-tabs>button{font-size:17px}.launch-wallet-status strong{font-size:18px}
 }
 @media(prefers-reduced-motion:reduce){.spin-icon{animation:none}}
+
+/* Global Bag contributions split into two recipient groups at the 24h distribution. */
+.global-distribution-flow,.economy-flow>.global-distribution-flow{display:flex;flex-direction:column;align-items:center;width:100%;max-width:630px;gap:0;margin:23px auto 0;color:var(--ink);font:500 11px/1.6 'Space Grotesk';letter-spacing:0}
+.global-contribution-path{display:flex;justify-content:center;align-items:center;gap:14px;max-width:100%;text-align:center}
+.global-distribution-flow strong{font:600 11px/1.6 'Space Grotesk';border:0;border-radius:0;background:none;transform:none;padding:0;letter-spacing:0}
+.global-contribution-path>strong{padding:3px 8px;background:#ece0b5;border-bottom:1px solid #a59672;transform:rotate(-1deg)}
+.global-distribution-cadence{display:flex;flex-direction:column;align-items:center;gap:5px;margin-top:7px}
+.global-distribution-cadence>span{display:flex;align-items:center;gap:6px;color:#756b56}
+.global-recipient-branches{position:relative;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;padding-top:32px;width:100%;max-width:440px}
+.global-recipient-branches:before{content:'';position:absolute;top:14px;left:calc(25% - 5px);right:calc(25% - 5px);border-top:1.3px solid #9b8d6c;transform:rotate(-.25deg)}
+.global-recipient-branches:after{content:'';position:absolute;top:0;left:50%;height:15px;border-left:1.3px solid #9b8d6c}
+.global-recipient{position:relative;min-width:0;display:flex;align-items:center;flex-direction:column;gap:7px;text-align:center;padding-top:8px}
+.global-recipient>.recipient-arrow{position:absolute;top:-18px;left:calc(50% - 9.5px);color:#9b8d6c}
+.global-recipient>strong{max-width:100%;overflow-wrap:normal}
+.global-card>.global-creator-note,.home-feature-copy>.global-creator-note{font-size:11px;line-height:1.8;margin-top:18px;color:var(--muted)}
+.economy-flow>.global-distribution-flow{margin-top:0}
+.global-page-heading .global-page-distribution-copy{max-width:550px;font-size:13px;line-height:1.8;margin-top:12px}
+@media(max-width:720px){
+ .global-distribution-flow,.economy-flow>.global-distribution-flow{font-size:10px;margin-top:20px}
+ .global-distribution-flow strong{font-size:10px}
+ .global-contribution-path{gap:10px}
+ .global-recipient-branches{gap:16px}
+ .global-recipient-branches:before{left:calc(25% - 4px);right:calc(25% - 4px)}
+ .global-card>.global-creator-note,.home-feature-copy>.global-creator-note{font-size:10px}
+ .global-page-heading .global-page-distribution-copy{font-size:12px}
+}
