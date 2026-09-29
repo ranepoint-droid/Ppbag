@@ -1,0 +1,18 @@
+import {useState} from 'react';
+import {ChevronDown,RotateCcw} from 'lucide-react';
+import {BagArt} from '../BagArt';
+import {amount,compact} from '../../lib/api';
+export const TokenBag=({project:p})=>{
+ const [history,setHistory]=useState(false);
+ return <section className="trading-bag" data-testid="token-bag">
+  <div className="trading-bag-title"><span className="eyebrow">EVERY TOKEN CARRIES A BAG</span><span className="mode-badge" data-testid="token-bag-mode">{p.mode}</span></div>
+  <div className="trading-bag-value"><BagArt progress={p.progress}/><div><h3 data-testid="token-bag-asset">{p.asset} BAG</h3><strong data-testid="token-bag-amount">{amount(p.asset_amount)} <small>{p.asset}</small></strong><span data-testid="token-bag-asset-target">/ {amount(p.asset_target)} {p.asset}</span></div></div>
+  <div className="progress-track"><span style={{width:`${p.progress}%`}}/></div><div className="trading-bag-meta" data-testid="token-bag-meta"><span>{p.progress}% full</span><span>Cycle #{String(p.cycle).padStart(2,'0')}</span></div>
+  <p className="token-next-bag" data-testid="token-next-bag">{p.mode==='SHARE'?`Next Bag: ${p.asset} shared with eligible holders.`:`Next Bag: buy back and burn $${p.ticker}.`} Then the cycle starts again.</p>
+  <div className="token-bag-target" data-testid="token-bag-target"><span>Bag target</span><strong>{p.target_sol} SOL</strong></div>
+  <div className="token-carry-row" data-testid="token-carry"><span><i className={p.carry_status==='Active'?'status-dot':'idle-dot'}/> Bag Worker {p.carry_status}</span><strong className={p.carry_pnl>=0?'positive':'negative'}>{p.carry_pnl>=0?'+':''}{p.carry_pnl} SOL <small>P&L</small></strong></div>
+  <small className="token-carry-note" data-testid="carry-added-to-bag">+{p.carry_added} SOL added to Bag. Only realized profit counts.</small>
+  <button className="bag-history-toggle" onClick={()=>setHistory(!history)} aria-expanded={history} data-testid="token-bag-history-toggle"><RotateCcw size={12}/> Bag history <ChevronDown size={13} style={{transform:history?'rotate(180deg)':''}}/></button>
+  {history&&<div className="inline-bag-history" data-testid="token-bag-history"><div data-testid="current-bag-cycle"><img src="/bag-mark.svg" alt=""/><span>#{String(p.cycle).padStart(2,'0')}</span><strong>{compact(p.asset_amount)} {p.asset}</strong><small>FILLING</small></div>{p.history.map(h=><div key={h.cycle} data-testid={`bag-history-cycle-${h.cycle}`}><img src="/bag-mark.svg" alt=""/><span>#{String(h.cycle).padStart(2,'0')}</span><strong>{compact(h.amount)} {h.asset}</strong><small>{h.status}</small></div>)}</div>}
+ </section>;
+};

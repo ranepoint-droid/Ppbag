@@ -1,0 +1,106 @@
+{
+  "project_name": "Paperbag Launchpad (Ppb)",
+  "design_archetype": "ORGANIC & EARTHY / TACTILE KRAFT",
+  "theme": "Light Theme Default (Warm Kraft Sand & Deep Charcoal)",
+  "color_palette": {
+    "background": {
+      "primary": "#faf7ed",
+      "surface": "#f3ebd9",
+      "card": "#ffffff",
+      "card_accent": "#f5eedc",
+      "dark_surface": "#2c2923"
+    },
+    "text": {
+      "primary": "#2c2923",
+      "secondary": "#63584c",
+      "muted": "#8c7d6b",
+      "inverse": "#faf7ed"
+    },
+    "borders": {
+      "subtle": "#e8e0cc",
+      "medium": "#d8d0bc",
+      "dark": "#393127"
+    },
+    "brand_accents": {
+      "kraft_gold": "#c99b63",
+      "kraft_dark": "#725337",
+      "sol_purple": "#9945FF",
+      "sol_green": "#14F195",
+      "warning": "#e17055",
+      "success": "#27ae60"
+    }
+  },
+  "typography": {
+    "heading_font": "Cabinet Grotesk, sans-serif / DM Sans, sans-serif",
+    "body_font": "DM Sans, sans-serif",
+    "mono_font": "JetBrains Mono, monospace",
+    "handwriting_accent": "Caveat, cursive",
+    "sizes": {
+      "h1": "text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight",
+      "h2": "text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-tight",
+      "h3": "text-xl sm:text-2xl font-semibold",
+      "body": "text-base leading-relaxed",
+      "caption": "text-sm text-muted uppercase tracking-wider"
+    }
+  },
+  "paperbag_artwork_requirement": {
+    "rule": "CRITICAL: NO FACES ON PAPERBAGS. All paperbag illustrations, hero photos, icons, and SVG components must be plain kraft paper bag graphics with NO facial features (no eyes, mouth, blush, or smile).",
+    "component_update": "BagArt component must render face={false} strictly. Hero image must use a clean, plain kraft paper bag image.",
+    "plain_paperbag_image_url": "https://images.unsplash.com/photo-1712402832925-d41c446883d3?crop=entropy&cs=srgb&fm=jpg&q=85"
+  },
+  "routes_and_navigation": {
+    "top_level_routes": [
+      { "path": "/", "name": "Home", "description": "Landing page with hero, overview stats, token carousel/grid, Bag Worker preview section, Global Bag preview section, How It Works, and CTA." },
+      { "path": "/bags", "name": "Explore Tokens", "description": "Token discovery search, filters, sorting, and responsive grid/list." },
+      { "path": "/token/:id", "name": "Token Detail", "description": "Individual token trading page with price chart, practice buy/sell panel, activity stream, and bag progress." },
+      { "path": "/bag-worker", "name": "Bag Worker", "description": "Dedicated independent page explaining automated ecosystem yield, Carry node simulation, profit distribution, and status logs." },
+      { "path": "/global-bag", "name": "Global Bag", "description": "Dedicated independent page detailing shared ecosystem asset vaults (SOL, USDC, DOGE, BONK), distribution countdown, and $PAPERBAG 80/20 mechanism." },
+      { "path": "/leaderboard", "name": "Leaderboard", "description": "Rankings for top bags, volume, profits, and fast openers." },
+      { "path": "/launch", "name": "Launch a Token", "description": "Draft creation flow with token image upload, bag target settings, and preview." }
+    ],
+    "header_nav_links": [
+      { "label": "Bags", "url": "/bags", "testid": "nav-bags" },
+      { "label": "Bag Worker", "url": "/bag-worker", "testid": "nav-bag-worker" },
+      { "label": "Global Bag", "url": "/global-bag", "testid": "nav-global-bag" },
+      { "label": "Leaderboard", "url": "/leaderboard", "testid": "nav-leaderboard" },
+      { "label": "$PAPERBAG", "url": "/global-bag#paperbag", "testid": "nav-paperbag" },
+      { "label": "Launch", "url": "/launch", "testid": "nav-launch" }
+    ]
+  },
+  "home_page_sections": {
+    "hero": "Main headline 'BIG IDEAS. FULL BAGS.' with plain paperbag hero visual and floating status badges.",
+    "stats_overview": "Live/simulated token metrics (tokens, volume, bags opened).",
+    "token_grid": "Featured token cards with search, filter tabs, and quick trade link.",
+    "bag_worker_explanatory_section": {
+      "title": "MEET THE BAG WORKER",
+      "copy": "Automated ecosystem engine that puts platform revenue to work for active tokens. Realized profits fill project bags.",
+      "cta": "Explore Bag Worker System",
+      "cta_link": "/bag-worker",
+      "testid": "home-bag-worker-section"
+    },
+    "global_bag_explanatory_section": {
+      "title": "THE GLOBAL BAG VAULTS",
+      "copy": "Shared community vaults holding SOL, USDC, DOGE, and BONK funded by every launch, distributed to $PAPERBAG holders every 24 hours.",
+      "cta": "View Global Bag Vaults",
+      "cta_link": "/global-bag",
+      "testid": "home-global-bag-section"
+    },
+    "how_it_works": "Interactive 5-stage paperbag cycle animation.",
+    "launch_cta": "Call to action banner to draft or launch a token."
+  },
+  "general_ui_ux_guidelines": {
+    "accessibility": "All interactive elements, buttons, nav links, forms, and cards MUST include data-testid attributes.",
+    "headers_and_nav": "Site header MUST use backdrop-blur-md bg-[#faf7ed]/90 with border-b border-[#e8e0cc]. NEVER use fully transparent background on overlays, modals, or dropdown menus.",
+    "spacing": "Maintain generous padding (p-6, p-8, p-12) and gaps (gap-6, gap-8) across containers to ensure legibility and clean mobile layouts.",
+    "mobile_responsiveness": "Ensure grid-cols-1 on mobile scaling smoothly to grid-cols-2 or grid-cols-3 on desktop.",
+    "animations": "Micro-interactions with framer-motion for smooth hover states, status transitions, and progress fill bars."
+  },
+  "instructions_to_main_agent": [
+    "1. Replace facial paperbag artwork with plain paperbag assets (face={false} on BagArt component, replace hero photo with plain paperbag URL).",
+    "2. Rename 'Carry' terminology to 'Bag Worker' across all UI labels, copy, buttons, navigation links, and subheaders.",
+    "3. Implement independent pages for /bag-worker and /global-bag in App.js router and page definitions.",
+    "4. On the Home page (/), add clean explanatory sections for 'Bag Worker' and 'Global Bag' linking directly to /bag-worker and /global-bag.",
+    "5. Tidy up messy page layouts: improve header alignment, balance card paddings, fix text overlaps, ensure clean responsive mobile views.",
+    "6. Ensure all test IDs specified in test files (site-header, brand-home, nav-*, hero-*, wallet-dialog, etc.) are strictly preserved."
+  ]
+}
